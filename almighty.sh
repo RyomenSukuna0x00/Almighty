@@ -35,7 +35,7 @@ mkdir -p Subdomains
 echo -e "${CYAN}Complete${RESET}"
 
 echo -e "${GREEN}Running Subfinder, Anew, and Httpx...${RESET}"
-echo ${TARGET_DOMAIN} | subfinder | anew | httpx >> Subdomains/subdomains.txt
+echo ${TARGET_DOMAIN} | subfinder -silent | anew | httpx -silent >> Subdomains/subdomains.txt
 echo -e "${CYAN}Complete${RESET}"
 
 echo -e "${GREEN}Running Httpx Scanning for sensitive files...${RESET}"
