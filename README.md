@@ -96,4 +96,4 @@ Before running the script, ensure you have the following tools installed on your
 Run the script using the following command:
 
 ```bash
-./script.sh -d <target_domain> [options]
+./script.sh -d <target_domain>
