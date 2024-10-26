@@ -91,9 +91,16 @@ Before running the script, ensure you have the following tools installed on your
       go install github.com/tomnomnom/gf@latest
       ```
 
+13. **[qsreplace](https://github.com/tomnomnom/qsreplace)**
+    - A tool for replacing query strings in URLs.
+    - **Installation:**
+      ```bash
+      go install github.com/tomnomnom/qsreplace@latest
+      ```
+
 ## Usage
 
 Run the script using the following command:
 
 ```bash
-./script.sh -d <target_domain>
+./script.sh -d <target_domain> 
