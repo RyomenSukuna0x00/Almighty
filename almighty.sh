@@ -46,7 +46,7 @@ cat Subdomains/subdomains.txt | httpx -silent -path "/.git" -mc 200 -title > Sub
 echo -e "${CYAN}Task Completed!${RESET}"
 
 echo -e "${GREEN}Running Httpx...${RESET}"
-cat Subdomains/subdomains.txt | httpx -sc -title -cl --tech-detect >> Subdomains/httpx-details.txt
+cat Subdomains/subdomains.txt | httpx -silent -sc -title -cl --tech-detect >> Subdomains/httpx-details.txt
 echo -e "${CYAN}Complete${RESET}"
 
 echo -e "${GREEN}Running Naabu...${RESET}"
