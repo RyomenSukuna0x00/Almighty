@@ -41,17 +41,17 @@ if [ -z "${TARGET_DOMAIN}" ]; then
     usage
 fi
 
-# Update logic
+# Check for updates if requested
 if [ "$UPDATE_SCRIPT" = true ]; then
     if [ -d ".git" ]; then
         echo -e "${CYAN}Checking for updates...${RESET}"
-        git fetch origin main || { echo -e "${RED}Failed to fetch updates.${RESET}"; exit 1; }
+        git fetch origin main
         LOCAL=$(git rev-parse HEAD)
         REMOTE=$(git rev-parse origin/main)
-
+        
         if [ "$LOCAL" != "$REMOTE" ]; then
             echo -e "${GREEN}Update available. Pulling latest version...${RESET}"
-            git pull origin main || { echo -e "${RED}Failed to pull updates.${RESET}"; exit 1; }
+            git pull origin main
             echo -e "${CYAN}Script updated successfully! Please re-run the script.${RESET}"
             exit 0
         else
@@ -63,7 +63,6 @@ if [ "$UPDATE_SCRIPT" = true ]; then
         exit 1
     fi
 fi
-
 
 echo -e "${GREEN}Creating Subdomain Directory${RESET}"
 mkdir -p Subdomains
