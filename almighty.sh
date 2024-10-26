@@ -113,3 +113,4 @@ if [ "$RUN_NUCLEI_SECOND_PART" = true ] || ([ "$RUN_NUCLEI_FIRST_PART" = true ] 
 fi
 
 echo -e "${GREEN}Process complete!${RESET}"
+echo "test"
