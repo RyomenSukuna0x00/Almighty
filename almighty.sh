@@ -14,7 +14,7 @@ echo -e "${GREEN}By Dhane Ashley Diabajo${RESET}"
 echo ""
 
 usage() {
-    echo "Usage: $0 -d <target_domain> [--skip-sn] [--skip-un] [--update]"
+    echo "Usage: $0 -d <target_domain> [-sn] [-un] [-update]"
     exit 1
 }
 
@@ -22,17 +22,12 @@ SKIP_SN=false
 SKIP_UN=false
 UPDATE_SCRIPT=false
 
-while getopts ":d:-:" opt; do
+while getopts ":d:snun:" opt; do
     case "${opt}" in
         d) TARGET_DOMAIN=${OPTARG} ;;
-        -)
-            case "${OPTARG}" in
-                skip-sn) SKIP_SN=true ;;
-                skip-un) SKIP_UN=true ;;
-                update) UPDATE_SCRIPT=true ;;
-                *) usage ;;
-            esac
-            ;;
+        s) SKIP_SN=true ;;
+        n) SKIP_UN=true ;;
+        u) UPDATE_SCRIPT=true ;;
         *) usage ;;
     esac
 done
