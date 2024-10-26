@@ -14,7 +14,7 @@ echo -e "${GREEN}By Dhane Ashley Diabajo${RESET}"
 echo ""
 
 usage() {
-    echo "Usage: $0 -d <target_domain> [-sn] [-un] [-update]"
+    echo "Usage: $0 -d <target_domain> [-sn] [-un] [-u]"
     exit 1
 }
 
@@ -22,12 +22,12 @@ SKIP_SN=false
 SKIP_UN=false
 UPDATE_SCRIPT=false
 
-while getopts ":d:snun:" opt; do
+while getopts ":d:sun" opt; do
     case "${opt}" in
         d) TARGET_DOMAIN=${OPTARG} ;;
-        s) SKIP_SN=true ;;
-        n) SKIP_UN=true ;;
-        u) UPDATE_SCRIPT=true ;;
+        s) SKIP_SN=true ;;   # Skip Nuclei for subdomains
+        n) SKIP_UN=true ;;   # Skip Nuclei for URLs
+        u) UPDATE_SCRIPT=true ;; # Update script
         *) usage ;;
     esac
 done
@@ -107,7 +107,7 @@ if [ "$SKIP_SN" = false ]; then
         cat Subdomains/subdomains.txt | nuclei -silent -rate-limit 200 -t /$HOME/nuclei-templates/http/cves/$i/*.yaml > urls/nuclei/nuclei-$i.txt
     done
 else
-    echo -e "${GREEN}Skipping Nuclei for URLs...${RESET}"
+    echo -e "${GREEN}Skipping Nuclei for subdomains...${RESET}"
 fi
 
 source /$HOME/venv/bin/activate
@@ -166,6 +166,8 @@ if [ "$SKIP_UN" = false ]; then
         echo -e "${NUCLEI_COLOR}Running Nuclei template for year $year...${RESET}"
         cat urls/final-clean.txt | nuclei -silent -rate-limit 200 -t /$HOME/nuclei-templates/http/cves/$year/*.yaml > urls/nuclei/nuclei-$year.txt
     done
+else
+    echo -e "${GREEN}Skipping Nuclei for URLs...${RESET}"
 fi
 
 echo -e "${GREEN}All tasks completed!${RESET}"
