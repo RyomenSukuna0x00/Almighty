@@ -38,7 +38,7 @@ echo -e "${GREEN}Creatinng Subdmain Directory${CYAN}"
 mkdir Subdomains
 echo -e "${CYAN}Complete${RESET}"
 
-echo -e "${GREEN}Running Subfinder , Anew , and Httpx...${}"
+echo -e "${GREEN}Running Subfinder , Anew , and Httpx...${RESET}"
 echo ${TARGET_DOMAIN} | subfinder | anew | httpx >> Subdomains/subdomains.txt
 echo -e "${CYAN}Complete${RESET}"
 
