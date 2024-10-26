@@ -125,7 +125,7 @@ cat urls/final-clean.txt | gf debug_logic | uro > urls/debug-logic.txt
 cat urls/final-clean.txt | gf img-traversal | uro > urls/img-traversal.txt
 cat urls/final-clean.txt | gf ssti | uro > urls/ssti.txt
 
-mkdir -p nuclei
+mkdir urls/nuclei
 for i in {2000..2024}; do
     echo -e "${NUCLEI_COLOR}Running Nuclei template $i${RESET}"
     cat urls/final-clean.txt | nuclei -silent -rate-limit 200 -t /$HOME/nuclei-templates/http/cves/$i/*.yaml > urls/nuclei/nuclei-$i.txt
