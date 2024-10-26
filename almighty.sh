@@ -21,7 +21,7 @@ usage() {
 # Check for update flag
 if [[ "$1" == "-update" ]]; then
     echo -e "${GREEN}Updating script from GitHub...${RESET}"
-    git pull origin main
+    git pull origin main > /dev/null
     exit 0
 fi
 
