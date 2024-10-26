@@ -74,3 +74,4 @@ if [ "$RUN_NUCLEI_SECOND_PART" = true ]; then
     echo -e "${NUCLEI_COLOR}Running second part of Nuclei tests on $TARGET_DOMAIN...${RESET}"
     # Add actual nuclei commands or logic here
 fi
+echo "test"
