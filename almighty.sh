@@ -87,7 +87,7 @@ source /$HOME/bugbounty450/venv/bin/activate
 mkdir -p urls
 
 echo -e "${GREEN}Running Katana${RESET}"
-echo "${TARGET_DOMAIN}" | katana -d 5 -ps -pss waybackarchive,commoncrawl,alienvault > urls/katana.txt
+echo "${TARGET_DOMAIN}" | katana -silent -d 5 -ps -pss waybackarchive,commoncrawl,alienvault > urls/katana.txt
 cat urls/katana.txt | uro > urls/katana-clean.txt
 echo -e "${GREEN}Task finished${RESET}"
 
