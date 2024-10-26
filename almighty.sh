@@ -3,14 +3,13 @@
 CYAN='\033[1;36m'
 RESET='\033[0m'
 GREEN='\033[0;32m'
-
+NUCLEI_COLOR='\033[0;34m'
 
 echo -e """${CYAN}
 ░█▀▀█ █░░ █▀▄▀█ ░▀░ █▀▀▀ █░░█ ▀▀█▀▀ █░░█ 
 ▒█▄▄█ █░░ █░▀░█ ▀█▀ █░▀█ █▀▀█ ░░█░░ █▄▄█ 
 ▒█░▒█ ▀▀▀ ▀░░░▀ ▀▀▀ ▀▀▀▀ ▀░░▀ ░░▀░░ ▄▄▄█${RESET}"""
 
-echo "test"
 echo -e "${GREEN}By Dhane Ashley Diabajo${RESET}"
 echo ""
 usage() {
@@ -20,8 +19,17 @@ usage() {
 
 # Check for update flag
 if [[ "$1" == "-update" ]]; then
+    echo -e "${GREEN}Checking for local changes...${RESET}"
+    
+    # Check if there are local changes
+    if ! git diff-index --quiet HEAD --; then
+        echo -e "${GREEN}Local changes detected. Stashing changes...${RESET}"
+        git stash
+    fi
+    
     echo -e "${GREEN}Updating script from GitHub...${RESET}"
-    git pull origin main > /dev/null
+    git pull origin main
+    echo -e "${GREEN}Update complete!${RESET}"
     exit 0
 fi
 
@@ -147,7 +155,4 @@ cat urls/final-clean.txt | gf ssti > urls/ssti.txt
 
 mkdir urls/nuclei
 for i in {2000..2024}; do
-    echo -e "${GREEN}Running Nuclei template $i...${RESET}"
-    cat urls/final-clean.txt | nuclei -silent -rate-limit 200 -t /$HOME/nuclei-templates/http/cves/$i/*.yaml > urls/nuclei/nuclei-$i.txt
-done
-echo -e "${GREEN}Process complete!${RESET}"
+    echo -e "${NUCLEI_COLOR}
