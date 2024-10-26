@@ -13,21 +13,46 @@ echo -e """${CYAN}
 echo -e "${GREEN}By Dhane Ashley Diabajo${RESET}"
 echo ""
 usage() {
-    echo "Usage: $0 -d <target_domain> [-S] [-U]"
+    echo "Usage: $0 -d <target_domain> [-S] [-U] [-update]"
     exit 1
 }
 
 RUN_NUCLEI_FIRST_PART=false
 RUN_NUCLEI_SECOND_PART=false
+UPDATE_SCRIPT=false
 
-while getopts ":d:SU" opt; do
+while getopts ":d:SUupdate" opt; do
     case "${opt}" in
         d) TARGET_DOMAIN=${OPTARG} ;;
         S) RUN_NUCLEI_FIRST_PART=true ;;
         U) RUN_NUCLEI_SECOND_PART=true ;;
+        update) UPDATE_SCRIPT=true ;;
         *) usage ;;
     esac
 done
+
+# Check for update if -update option is provided
+if [ "$UPDATE_SCRIPT" = true ]; then
+    if [ -d ".git" ]; then
+        echo -e "${CYAN}Checking for updates...${RESET}"
+        git fetch origin main
+        LOCAL=$(git rev-parse HEAD)
+        REMOTE=$(git rev-parse origin/main)
+        
+        if [ "$LOCAL" != "$REMOTE" ]; then
+            echo -e "${GREEN}Update available. Pulling latest version...${RESET}"
+            git pull origin main
+            echo -e "${CYAN}Script updated successfully! Please re-run the script.${RESET}"
+            exit 0
+        else
+            echo -e "${CYAN}Script is already up-to-date.${RESET}"
+            exit 0
+        fi
+    else
+        echo -e "${CYAN}This script is not in a Git repository, so it cannot be updated automatically.${RESET}"
+        exit 1
+    fi
+fi
 
 if [ -z "${TARGET_DOMAIN}" ]; then
     usage
