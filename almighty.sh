@@ -17,12 +17,8 @@ usage() {
 
 while getopts ":d:" opt; do
     case "${opt}" in
-        d)
-            TARGET_DOMAIN=${OPTARG}
-            ;;
-        *)
-            usage
-            ;;
+        d) TARGET_DOMAIN=${OPTARG} ;;
+        *) usage ;;
     esac
 done
 
@@ -106,25 +102,23 @@ cat urls/katana-clean.txt urls/gau-clean.txt urls/waybackurls-clean.txt > urls/f
 rm urls/katana-clean.txt urls/gau-clean.txt urls/waybackurls-clean.txt
 echo -e "${GREEN}Task Completed${RESET}"
 
-echo -e "${GREEN}Checking all js files andd running linkfinder...${RESET}"
+echo -e "${GREEN}Checking all js files and running linkfinder...${RESET}"
+mkdir -p js-files
 linkfinder_path="/$HOME/LinkFinder/linkfinder.py"
-cat final-clean.txt | grep "\.js$" "$filename" | uro | while read url; do
-    output=$(python3 "$linkfinder_path" -i "$url" -o cli 2>/dev/null)
+output_file="js-files/endpoints.txt"
+> "$output_file"
 
-    # Check for specific error messages in the output
+cat urls/final-clean.txt | grep "\.js$" | uro | while read -r url; do
+    output=$(python3 "$linkfinder_path" -i "$url" -o cli 2>/dev/null)
     if [[ "$output" != *"Usage: python /home/kali/LinkFinder/linkfinder.py [Options] use -h for help"* ]] && \
        [[ "$output" != *"Error: invalid input defined or SSL error: HTTP Error 404: Not Found"* ]] && \
        [[ ! -z "$output" ]]; then
         echo -e "\e[32m$url\e[0m"
         echo "$output"
         echo ""
-
-        # Append output to the specified file if provided
-        if [ -n "$output_file" ]; then
-            echo "$url" >> "$output_file"
-            echo "$output" >> "$output_file"
-            echo "" >> "$output_file"
-        fi
+        echo "$url" >> "$output_file"
+        echo "$output" >> "$output_file"
+        echo "" >> "$output_file"
     fi
 done
 echo -e "${GREEN}Task Completed${RESET}"
