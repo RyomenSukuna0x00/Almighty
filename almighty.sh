@@ -10,6 +10,7 @@ echo -e """${CYAN}
 ▒█▄▄█ █░░ █░▀░█ ▀█▀ █░▀█ █▀▀█ ░░█░░ █▄▄█ 
 ▒█░▒█ ▀▀▀ ▀░░░▀ ▀▀▀ ▀▀▀▀ ▀░░▀ ░░▀░░ ▄▄▄█${RESET}"""
 
+echo "test"
 echo -e "${GREEN}By Dhane Ashley Diabajo${RESET}"
 echo ""
 usage() {
